@@ -2,6 +2,7 @@ import os
 import sys
 import pexpect as pe
 import numpy as np
+from Examples.generation_conf import SOLUTIONS_DIR
 
 # hack to allow scripts to be placed in subdirectories next to ExoPlex:
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
@@ -83,20 +84,22 @@ def run_perplex(*args):
             test[-1] = '0.15Fe'
             filename = '_'.join(test)
 
-        if os.path.isfile('../Solutions_Small/'+filename+'_UM_results.txt') and UMLM == True:
+        if os.path.isfile(os.path.join(SOLUTIONS_DIR, filename + '_UM_results.txt')) and UMLM == True:
             if verbose == True:
                 print ('The Upper mantle .tab already exists\n')
-            return '../Solutions_Small/' + filename
+            # return '../Solutions_Small/' + filename
+            return os.path.join(SOLUTIONS_DIR, filename)
 
-        if os.path.isfile('../Solutions_Small/'+filename+'_LM_results.txt') and UMLM == False:
+        if os.path.isfile(os.path.join(SOLUTIONS_DIR, filename + '_LM_results.txt')) and UMLM == False:
             if verbose == True:
                 print ('The Lower mantle .tab already exists\n')
-            return '../Solutions_Small/' + filename
+            # return '../Solutions_Small/' + filename
+            return os.path.join(SOLUTIONS_DIR, filename)
 
         else:
-            print("You have set use_grids to True but your composition does not exist within the grids.")
-            print("Try again with use_grids = False")
-            sys.exit()
+            # print("You have set use_grids to True but your composition does not exist within the grids.")
+            # print("Try again with use_grids = False")
+            raise AttributeError("You have set use_grids to True but your composition does not exist within the grids. \n Try again with use_grids = False")
 
     Mantle_wt_per = args[0]
     structure_params = args[2]

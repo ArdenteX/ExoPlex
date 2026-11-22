@@ -2,7 +2,6 @@ import sys
 import os
 import numpy as np
 
-
 if not os.path.exists('ExoPlex') and os.path.exists('../ExoPlex'):
     sys.path.insert(1, os.path.abspath('..'))
 Earth_radius = 6371e3
@@ -57,10 +56,12 @@ def initialize_by_mass(*args):
     mantle_mass = (mass_planet*Earth_mass)-water_mass-core_mass
     Mantle_potential_temp = structural_params.get('Mantle_potential_temp')
     water_potential_temp = structural_params.get('water_potential_temp')
-    if mass_planet > 5:
+    if 5 <= mass_planet < 8:
         Radius_planet_guess = 1.5
-    elif mass_planet >8:
+
+    elif mass_planet >= 8:
         Radius_planet_guess = 1.75
+
     else:
         Radius_planet_guess = 1.
 
@@ -170,7 +171,7 @@ def compress_mass(*args):
         Planet['radius'] = minphys.get_radius(Planet,wt_frac_water,core_mass_frac,layers)
         Planet['gravity'] = minphys.get_gravity(Planet,layers)
         Planet['pressure'] = minphys.get_pressure(Planet,layers)
-        Planet['temperature'] = minphys.get_temperature(Planet, grids, structural_params, layers)
+        Planet['temperature'], Planet['alpha'], Planet['CP'] = minphys.get_temperature(Planet, grids, structural_params, layers)
         n_iterations+=1
     return Planet
 

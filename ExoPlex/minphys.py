@@ -694,8 +694,6 @@ def get_temperature(Planet,grids,structural_parameters,layers):
     depths_core = depths[:num_core_layers]
     gravity_core = gravity[:num_core_layers]
 
-
-
     if number_h2o_layers > 0:
 
         P_points_water = pressure[num_core_layers+num_mantle_layers:]
@@ -755,7 +753,10 @@ def get_temperature(Planet,grids,structural_parameters,layers):
 
         temperatures = np.concatenate((temperatures_core,temperatures_mant,temperatures_water),axis=0)
 
-        return temperatures
+        alpha_all = np.concatenate((core_alpha, alpha_mant, alpha_water),axis=0)
+        cp_all = np.concatenate((core_cp, spec_heat_mantle, spec_heat_water),axis=0)
+
+        return temperatures, alpha_all, cp_all
 
     else:
         for i in range(len(alpha_mant))[::-1]:
@@ -805,9 +806,10 @@ def get_temperature(Planet,grids,structural_parameters,layers):
         temperatures_core = [np.exp(k) * temperatures_mant[0] for k in gradient_core][::-1]
 
         temperatures = np.concatenate((temperatures_core,temperatures_mant),axis=0)
+        alpha_all = np.concatenate((core_alpha, alpha_mant), axis=0)
+        cp_all = np.concatenate((core_cp, spec_heat_mantle), axis=0)
 
-
-        return temperatures
+        return temperatures, alpha_all, cp_all
 
 def check_convergence(new_rho,old_rho):
     """

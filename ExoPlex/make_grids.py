@@ -2,7 +2,10 @@ import numpy as np
 from scipy.spatial import Delaunay
 from scipy.interpolate import LinearNDInterpolator
 import pandas as pd
+import os
 
+_EXOPLEX_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SOLUTIONS_DIR = os.path.join(_EXOPLEX_ROOT, 'Solutions_Small')
 #constants, atomic masses
 mFe = 55.845
 mMg = 24.306
@@ -15,7 +18,8 @@ range_FeO = np.array([0., .02, .04, .06, .08, .1, .15, .20])
 
 def make_core_grid():
 
-    filename = '../Solutions_Small/liquid_iron_grid.dat'
+    # filename = '../Solutions_Small/liquid_iron_grid.dat'
+    filename = os.path.join(SOLUTIONS_DIR, "liquid_iron_grid.dat")
     df = pd.read_csv(filename)
     df = df.iloc[::10]
     df.rename(columns={'# P_bar': 'P_bar'},inplace=True)
@@ -35,7 +39,8 @@ def make_core_grid():
     return dict(zip(keys,[interpolator_rho,interpolator_alpha,interpolator_CP]))
 
 def make_water_grid():
-    filename = '../Solutions_Small/water_grid.dat'
+    # filename = '../Solutions_Small/water_grid.dat'
+    filename = os.path.join(SOLUTIONS_DIR, "water_grid.dat")
     df = pd.read_csv(filename)
     df.rename(columns={'# P': 'P'}, inplace=True)
     pressure_grid = np.array(df['P'])
@@ -62,11 +67,14 @@ def make_water_grid():
     return dict(zip(keys, [interpolator_rho, interpolator_alpha, interpolator_CP, interpolator_phases])),phase_names
 
 def make_mantle_feo_grid(Mantle_filename,Mantle_wt_per,UMLM):
+    dir_path = os.path.dirname(Mantle_filename)
+    base_name = os.path.basename(Mantle_filename)
+    tokens = base_name.split('_')
 
-    test = Mantle_filename.split('_')
-    Ca = float(test[1].split('/')[1].split('Ca')[0])
-    Al = float(test[3].split('Al')[0])
-    Si = float(test[4].split('Si')[0])
+    # test = Mantle_filename.split('_')
+    Ca = float(tokens[0].split('Ca')[0])
+    Al = float(tokens[2].split('Al')[0])
+    Si = float(tokens[3].split('Si')[0])
 
     mu_bar = Ca * (mCa + mO) + Al * (mAl + 1.5 * mO) + Si * (mSi + 2 * mO) + (mMg + mO)
 
@@ -78,20 +86,20 @@ def make_mantle_feo_grid(Mantle_filename,Mantle_wt_per,UMLM):
     if FeO_act > FeO_file_1:
 
         FeO_file_2_id = FeO_file_1_id + 1
-        test[-1] = str(format(range_FeO[FeO_file_1_id], '.2f')) + 'Fe'
-        filename_down = '_'.join(test)
-        test[-1] = str(format(range_FeO[FeO_file_2_id], '.2f')) + 'Fe'
-        filename_up = '_'.join(test)
+        tokens[-1] = str(format(range_FeO[FeO_file_1_id], '.2f')) + 'Fe'
+        filename_down = os.path.join(dir_path, '_'.join(tokens))
+        tokens[-1] = str(format(range_FeO[FeO_file_2_id], '.2f')) + 'Fe'
+        filename_up = os.path.join(dir_path, '_'.join(tokens))
         X_wt_up = (FeO_act - range_FeO[FeO_file_1_id]) / (range_FeO[FeO_file_2_id] - range_FeO[FeO_file_1_id])
         mol_Fe_down = (mu_bar / (mO + mFe)) * (-1 + (1 / (1 - range_FeO[FeO_file_1_id])))
         mol_Fe_up = (mu_bar / (mO + mFe)) * (-1 + (1 / (1 - range_FeO[FeO_file_2_id])))
 
     else:
         FeO_file_2_id = FeO_file_1_id - 1
-        test[-1] = str(format(range_FeO[FeO_file_1_id], '.2f')) + 'Fe'
-        filename_up = '_'.join(test)
-        test[-1] = str(format(range_FeO[FeO_file_2_id], '.2f')) + 'Fe'
-        filename_down = '_'.join(test)
+        tokens[-1] = str(format(range_FeO[FeO_file_1_id], '.2f')) + 'Fe'
+        filename_up = os.path.join(dir_path, '_'.join(tokens))
+        tokens[-1] = str(format(range_FeO[FeO_file_2_id], '.2f')) + 'Fe'
+        filename_down = os.path.join(dir_path, '_'.join(tokens))
         X_wt_up = (FeO_act - range_FeO[FeO_file_2_id]) / (range_FeO[FeO_file_1_id] - range_FeO[FeO_file_2_id])
         mol_Fe_down = (mu_bar / (mO + mFe)) * (-1 + (1 / (1 - range_FeO[FeO_file_2_id])))
         mol_Fe_up = (mu_bar / (mO + mFe)) * (-1 + (1 / (1 - range_FeO[FeO_file_1_id])))

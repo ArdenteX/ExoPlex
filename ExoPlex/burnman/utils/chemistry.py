@@ -19,6 +19,7 @@ from collections import Counter
 import pkgutil
 from string import ascii_uppercase as ucase
 from sympy import nsimplify
+from Examples.generation_conf import BURNMAN_DIR
 
 
 def read_masses():
@@ -27,7 +28,8 @@ def read_masses():
     elements and their masses into a dictionary
     """
 
-    file = os.getcwd().strip('Examples')+'ExoPlex/burnman/data/input_masses/atomic_masses.dat'
+    # file = os.getcwd().strip('Examples')+'ExoPlex/burnman/data/input_masses/atomic_masses.dat'
+    file = os.path.join(BURNMAN_DIR, 'atomic_masses.dat')
     datalines = open(file).readlines()
 
     lookup = dict()
