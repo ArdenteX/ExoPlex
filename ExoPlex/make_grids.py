@@ -130,7 +130,11 @@ def make_mantle_feo_grid(Mantle_filename,Mantle_wt_per,UMLM):
     df = pd.read_csv(file_open_1)
     df = df.iloc[::3]
 
-    df.rename(columns={'#P[bar]': 'P[bar]'}, inplace=True)
+    replace_name_1 = '#P[bar]'
+    if replace_name_1 not in df.columns:
+        replace_name_1 = '# P[bar]'
+
+    df.rename(columns={replace_name_1: 'P[bar]'}, inplace=True)
     df.columns = df.columns.str.lstrip()
     pressure_grid_up = np.array(df['P[bar]'])
     temperature_grid_up = np.array(df['T[K]'])
@@ -151,7 +155,12 @@ def make_mantle_feo_grid(Mantle_filename,Mantle_wt_per,UMLM):
     ##
     df = pd.read_csv(file_open_2)
     df = df.iloc[::3]
-    df.rename(columns={'#P[bar]': 'P[bar]'}, inplace=True)
+
+    replace_name_2 = '#P[bar]'
+    if replace_name_2 not in df.columns:
+        replace_name_2 = '# P[bar]'
+
+    df.rename(columns={replace_name_2: 'P[bar]'}, inplace=True)
     df.columns = df.columns.str.lstrip()
     pressure_grid_down= np.array(df['P[bar]'])
     temperature_grid_down = np.array(df['T[K]'])

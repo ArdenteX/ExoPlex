@@ -57,3 +57,9 @@ use_grids = True
 _EXOPLEX_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOLUTIONS_DIR = os.path.join(_EXOPLEX_ROOT, 'Solutions_Small')
 BURNMAN_DIR = os.path.join(_EXOPLEX_ROOT, 'ExoPlex', 'burnman', 'data', 'input_masses')
+
+observable_keys = ['planet_mass', 'planet_radius', 'FeMg', 'SiMg', 'sample_id']
+interiors_keys = ['CMF', 'MMF', 'WMF', 'CRF', 'MRF', 'WRF', 'PCMB', 'TCMB', 'sample_id']
+out_keys = [
+    'layer_mass', 'layer_radius', 'layer_pressure', 'layer_temperature', 'layer_density', 'layer_gravity', 'beta', 'layer_types', 'sample_id'
+]
